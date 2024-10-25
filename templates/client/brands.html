@@ -1,0 +1,95 @@
+{% extends 'client/admin_base.html' %}
+{% set model_name = 'Brands' %}
+{% from "_formhelper.html" import render_field %}
+{% from "macroses.html" import alerts, modal %}
+
+{% block content %}
+    {{ alerts("Brand") }}
+
+    <div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal">
+          Create
+        </button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Logo</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Manufacturers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                    <tr class="align-middle">
+                        <td>{{ brand.id }}</td>
+                        <td><img src="{{ url_for('static', filename='images/'+brand.logo) }}" alt="Brand Logo" style="width: 50px; height: 50px; object-fit: contain;"></td>
+                        <td>{{ brand.name }}</td>
+                        <td>{{ brand.description }}</td>
+                        <td>
+                            {% for manufacturer in brand.manufacturers %}
+                                {{ manufacturer.name }} {{ ", " if not loop.last }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+        {% call modal("Brand") %}
+            <form method=post id='create_brand_form'>
+                  <dl>
+                    {{ render_field(form.logo) }}
+                    {{ render_field(form.name) }}
+                    {{ render_field(form.description) }}
+                    {{ render_field(form.manufacturers) }}
+                  </dl>
+              </form>
+        {% endcall %}
+
+{% endblock %}
+
+{% block scripts %}
+	<script>
+        const url = "/api/v1/brands";
+        const form = document.querySelector("#create_brand_form");
+        const btn_save = document.querySelector("#btn_save");
+
+        const successToast = document.getElementById('success_toast');
+        const errorToast = document.getElementById('error_toast');
+
+        async function sendData() {
+          const formData = new FormData(form);
+
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: formData,
+            });
+            if (response.status === 201) {
+              successToast.classList.remove('d-none');
+              successToast.classList.add('d-block');
+              setTimeout(() => {
+                successToast.classList.remove('d-block');
+                successToast.classList.add('d-none');
+              }, 3000);
+            } else {
+              errorToast.classList.remove('d-none');
+              errorToast.classList.add('d-block');
+              setTimeout(() => {
+                errorToast.classList.remove('d-block');
+                errorToast.classList.add('d-none');
+              }, 3000);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        btn_save.addEventListener("click", (event) => {
+          sendData();
+        });
+    </script>
+{% endblock %}

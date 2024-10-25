@@ -1,0 +1,37 @@
+{% macro alerts(model_name) %}
+    <div class="position-fixed top-0 end-0 p-3 d-none" id="success_toast" style="z-index: 1100">
+      <div id="liveToast" class="toast d-flex bg-success hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          {{ model_name }} is created.
+        </div>
+      </div>
+    </div>
+    <div class="position-fixed top-0 end-0 p-3 d-none" id="error_toast" style="z-index: 1100">
+      <div id="liveToast" class="toast d-flex bg-danger hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          {{ model_name }} is not created.
+        </div>
+      </div>
+    </div>
+{% endmacro %}
+
+
+{% macro modal(model_name) %}
+    <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel">Create {{ model_name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              {{ caller() }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="btn_save">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endmacro %}
